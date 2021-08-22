@@ -266,7 +266,7 @@
 .contact-container .contact-img {
   width: 50%;
   height: 400px;
-  background-image: url("abc(1).png");
+  background-image: url("abc.png");
   background-position: center;
   background-size: cover;
 }
