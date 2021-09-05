@@ -1,48 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+    <style>
+      #post-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+      #post-list .post-item {
+        border: 1px solid grey;
+        border-radius: 7px;
+        margin-bottom: 15px;
+        padding: 15px;
+        margin-right: 15px;
+        flex-basis: 300px;
+      }
+
+      #post-list .post-item .title {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
     <button type="button" onclick="loadPosts()">Get Post List</button>
 
     <button type="button" onclick="createNewPost()">Create Post</button>
 
-    <p id="post-list"></p>
+    <div id="post-list"></div>
     <p id="post-created"></p>
 
     <script>
-        function loadPosts() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("post-list").innerHTML = this.responseText;
-                }
-            };
-            xhttp.open("GET", "https://jsonplaceholder.typicode.com/posts", true);
-            xhttp.send();
-        }
+      let postsList = document.getElementById("post-list");
+      function createPostElement(postItem) {
+        //create HTML to present a post
+        let post = document.createElement("div");
+        post.setAttribute("class", "post-item");
 
-        let createNewPost = function() {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("POST", "https://jsonplaceholder.typicode.com/posts", true);
-            xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xmlhttp.send(JSON.stringify({
-                                            title: 'foo',
-                                            body: 'bar',
-                                            userId: 1,
-                                        }));
+        // create p tag to present post title
+        let titlePost = document.createElement("p");
+        titlePost.setAttribute("class", "title");
+        titlePost.innerHTML = postItem.title;
 
-            xmlhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 201) {
-                    // let createdPost = JSON.parse(this.responseText);
-                    // document.getElementById("post-created").innerHTML = createdPost.title;
-                    document.getElementById("post-created").innerHTML = this.responseText;
-                }
-            };
-        }
+        // append title p tag to post item element
+        post.appendChild(titlePost);
+
+        // create p tag to present post body
+        let bodyPost = document.createElement("p");
+        bodyPost.setAttribute("class", "body");
+        bodyPost.innerHTML = postItem.body;
+
+        // append body p tag to post item element
+        post.appendChild(bodyPost);
+
+        return post;
+      }
+      function loadPosts() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            let posts = JSON.parse(this.responseText);
+            for (let i = 0; i < posts.length; i++) {
+              // create post element
+              let post = createPostElement(posts[i]);
+              // append post element to post list
+              postsList.appendChild(post);
+            }
+          }
+        };
+        xhttp.open("GET", "https://jsonplaceholder.typicode.com/posts", true);
+        xhttp.send();
+      }
+
+      let createNewPost = function () {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open(
+          "POST",
+          "https://jsonplaceholder.typicode.com/posts",
+          true
+        );
+        xmlhttp.setRequestHeader(
+          "Content-Type",
+          "application/json;charset=UTF-8"
+        );
+        xmlhttp.send(
+          JSON.stringify({
+            title: "my new title",
+            body: "This is the body of the title",
+            userId: 1,
+          })
+        );
+
+        xmlhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 201) {
+            let createdPost = JSON.parse(this.responseText);
+            // create post element
+            let post = createPostElement(createdPost);
+            // append post element to post list
+            postsList.appendChild(post);
+          }
+        };
+      };
     </script>
-</body>
+  </body>
 </html>
