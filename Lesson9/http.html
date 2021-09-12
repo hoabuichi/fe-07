@@ -1,51 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
+    <style>
+      #post-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+      #post-list .post-item {
+        border: 1px solid grey;
+        border-radius: 7px;
+        margin-bottom: 15px;
+        padding: 15px;
+        margin-right: 15px;
+        flex-basis: 300px;
+      }
+
+      #post-list .post-item .title {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <button type="button" onclick="loadPosts()">Get Post List</button>
+
     <button type="button" onclick="createNewPost()">Create Post</button>
 
+    <div id="post-list"></div>
     <p id="post-created"></p>
 
     <script>
-        // let createNewPost = function() {
-        //     var xmlhttp = new XMLHttpRequest();
-        //     xmlhttp.open("POST", "https://jsonplaceholder.typicode.com/posts", true);
-        //     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        //     xmlhttp.send(JSON.stringify({
-        //                                     title: 'foo',
-        //                                     body: 'bar',
-        //                                     userId: 1,
-        //                                 }));
+      let postsList = $("#post-list");
+      function createPostElement(postItem) {
+        return (
+          '<div class="post-item"><p class="title">' +
+          postItem.title +
+          '</p><p class="body">' +
+          postItem.body +
+          "</p></div>"
+        );
+      }
 
-        //     xmlhttp.onreadystatechange = function() {
-        //         if (this.readyState == 4 && this.status == 201) {
-        //             document.getElementById("post-created").innerHTML = this.responseText;
-        //         }
-        //     };
-        // }
-        let createNewPost = function() {
-            $.ajax({
-                url: "https://jsonplaceholder.typicode.com/posts", 
-                type: 'POST',
-                data: {
-                    title: 'foo',
-                    body: 'bar',
-                    userId: 1
-                },
-                success: function(result){
-                    document.getElementById("post-created").innerHTML = result.title;
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        };
-   
+      function loadPosts() {
+        $.ajax({
+          url: "https://jsonplaceholder.typicode.com/posts",
+          type: "GET",
+          success: function (result) {
+            for (let i = 0; i < result.length; i++) {
+              // create post element
+              let post = createPostElement(result[i]);
+              // append post element to post list
+              postsList.append(post);
+            }
+          },
+          error: function (error) {
+            console.log(error);
+          },
+        });
+      }
+
+      let createNewPost = function () {
+        $.ajax({
+          url: "https://jsonplaceholder.typicode.com/posts",
+          type: "POST",
+          data: {
+            title: "my new Post",
+            body: "this life is beautiful",
+            userId: 1,
+          },
+          success: function (result) {
+            let post = createPostElement(result);
+            // append post element to post list
+            postsList.append(post);
+          },
+          error: function (error) {
+            console.log(error);
+          },
+        });
+      };
     </script>
-</body>
+  </body>
 </html>
